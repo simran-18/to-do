@@ -9,7 +9,7 @@ const api = axios.create({
   },
 });
 
-export const todoService = {
+export const TodoService = {
   // Get all todos
   getTodos: async ({page = 0, limit = 30}) => {
     try {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { todoService } from "../services/todoService";
+import { TodoService } from "../services/todoservice";
 import { FaPlus } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
@@ -35,7 +35,7 @@ const ToDoBoard = () => {
   const fetchTodos = async () => {
     try {
       setLoading(true);
-      const data = await todoService.getTodos({page:currentPage});
+      const data = await TodoService.getTodos({page:currentPage});
       const todosWithStatus = data.map((todo) => ({
         ...todo,
         status: todo.completed ? "completed" : "pending",
@@ -51,7 +51,7 @@ const ToDoBoard = () => {
   const handleAddTodo = useCallback(async (newTodo) => {
     try {
       setLoading(true);
-      const createdTodo = await todoService.createTodo({
+      const createdTodo = await TodoService.createTodo({
         todo: newTodo.todo,
         completed: newTodo.status === "completed",
         userId: 1,
@@ -84,7 +84,7 @@ const ToDoBoard = () => {
     );
 
     try {
-      await todoService.updateTodo(todoId, {
+      await TodoService.updateTodo(todoId, {
         completed: newStatus === "completed",
         status: newStatus,
       });
@@ -109,7 +109,7 @@ const ToDoBoard = () => {
 
     try {
       setLoading(true)
-      await todoService.updateTodo(updatedData.id, {
+      await TodoService.updateTodo(updatedData.id, {
       todo: updatedData.todo,
       status: updatedData.status,
       completed: updatedData.status === "completed",
@@ -137,7 +137,7 @@ const ToDoBoard = () => {
   const handleDeleteTodo = async (id) => {
     try {
       setLoading(true)
-      await todoService.deleteTodo(id);
+      await TodoService.deleteTodo(id);
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
     } catch (error) {
       console.error("Failed to delete todo:", error);
