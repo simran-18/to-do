@@ -24,8 +24,7 @@ export default function CreateTodoModal({ isOpen, onClose,onAddTodo }) {
     try {
       setIsSubmitting(true);
       const data={
-        title:title,
-        description:description
+        title:title
       }
       await onAddTodo(data)
 
@@ -86,6 +85,7 @@ export default function CreateTodoModal({ isOpen, onClose,onAddTodo }) {
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2"
+              
             >
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>
@@ -106,7 +106,7 @@ export default function CreateTodoModal({ isOpen, onClose,onAddTodo }) {
               disabled={isSubmitting}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
             >
-              {isSubmitting ? "Creating..." : "Create Todo"}
+              {isSubmitting ? "Creating..." : "Create Task"}
             </button>
           </div>
         </form>
