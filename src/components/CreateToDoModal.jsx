@@ -8,7 +8,6 @@ export default function CreateTodoModal({ isOpen, onClose,onAddTodo }) {
  
   const handleClose = () => {
     setTitle("");
-    setDescription("");
     setStatus("pending");
     setToast(null);
     onClose();

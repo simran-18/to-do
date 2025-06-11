@@ -11,9 +11,10 @@ const api = axios.create({
 
 export const todoService = {
   // Get all todos
-  getTodos: async () => {
+  getTodos: async ({page = 0, limit = 30}) => {
     try {
-      const response = await api.get('/todos?limit=30');
+      let skipped=(page-1)*limit;
+      const response = await api.get(`/todos?skip=${skipped}&limit=${limit}`);
       return response.data.todos;
     } catch (error) {
       console.error('Error fetching todos:', error);

@@ -4,18 +4,21 @@ import { todoService } from "../services/todoService";
 import { FaPlus } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import { FaEye } from "react-icons/fa";
 import CreateTodoModal from "../components/CreateToDoModal";
 import EditTodoModal from "../components/EditToDoModal";
+import Pagination from "../components/Pagination";
+import ScrollToTopBottom from "../components/ScrollToTopBottom";
+import Loader from "../components/Loader";
 
-const Index = () => {
+const ToDoBoard = () => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingId, setEditingId] = useState(null);
   const [selectedToDo, setSelectedToDo] = useState("");
-  const [newTodoText, setNewTodoText] = useState("");
-  const [showNewTodoForm, setShowNewTodoForm] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal,setShowEditModal]=useState(false)
+  const [showEditModal,setShowEditModal]=useState(false);
+  const [currentPage,setCurrentPage]=useState(1);
+  const [viewOnly,setViewOnly]=useState(true);
   const columns = {
     pending: { title: "Pending", color: "bg-orange-100 border-orange-300" },
     "in-progress": {
@@ -27,12 +30,12 @@ const Index = () => {
 
   useEffect(() => {
     fetchTodos();
-  }, []);
+  }, [currentPage]);
 
   const fetchTodos = async () => {
     try {
       setLoading(true);
-      const data = await todoService.getTodos();
+      const data = await todoService.getTodos({page:currentPage});
       const todosWithStatus = data.map((todo) => ({
         ...todo,
         status: todo.completed ? "completed" : "pending",
@@ -55,8 +58,6 @@ const Index = () => {
       });
 
       setTodos((prev) => [...prev, { ...createdTodo, status: newTodo.status }]);
-      setNewTodoText("");
-      setShowNewTodoForm(false);
     } catch (error) {
       console.error("Failed to create todo:", error);
     } finally {
@@ -125,7 +126,6 @@ const Index = () => {
           : todo
       )
     );
-      setEditingId(null);
       setSelectedToDo("");
     } catch (error) {
       console.error("Failed to update todo:", error);
@@ -146,26 +146,9 @@ const Index = () => {
     }
   };
 
-  const startEditing = (todo) => {
-    setEditingId(todo.id);
-    setSelectedToDo(todo.todo);
-  };
-
-  const cancelEditing = () => {
-    setEditingId(null);
-    setSelectedToDo("");
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-          <h2 className="text-xl font-semibold text-gray-700 mt-4">
-            Loading your board...
-          </h2>
-        </div>
-      </div>
+     <Loader/>
     );
   }
 
@@ -182,70 +165,13 @@ const Index = () => {
 
         {/* Add New Task Button/Form */}
         <div className="flex justify-center mb-8">
-          {!showNewTodoForm ? (
             <button
               onClick={() => setShowAddModal(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg cursor-pointer transition-colors duration-200 flex items-center space-x-2"
             >
               <FaPlus />
               <span>Add New Task</span>
-            </button>
-          ) : (
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-              <input
-                type="text"
-                value={newTodoText}
-                onChange={(e) => setNewTodoText(e.target.value)}
-                placeholder="Enter task description..."
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none mb-4"
-                autoFocus
-                onKeyDown={(e) => e.key === "Enter" && handleAddTodo()}
-              />
-              <div className="flex space-x-3 justify-end">
-                <button
-                  onClick={handleAddTodo}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-1"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span>Add</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setShowNewTodoForm(false);
-                    setNewTodoText("");
-                  }}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-1"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                  <span>Cancel</span>
-                </button>
-              </div>
-            </div>
-          )}
+            </button>    
         </div>
 
         {/* Kanban Board */}
@@ -295,61 +221,7 @@ const Index = () => {
                                     : ""
                                 }`}
                               >
-                                {editingId === todo.id ? (
-                                  <div>
-                                    <input
-                                      type="text"
-                                      value={selectedToDo}
-                                      onChange={(e) =>
-                                        setSelectedToDo(e.target.value)
-                                      }
-                                      className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none mb-3"
-                                      autoFocus
-                                      onKeyDown={(e) =>
-                                        e.key === "Enter" &&
-                                        handleEditTodo(todo.id)
-                                      }
-                                    />
-                                    <div className="flex space-x-2 justify-end">
-                                      <button
-                                        onClick={() => handleEditTodo(todo.id)}
-                                        className="text-green-600 hover:text-green-800 p-1"
-                                      >
-                                        <svg
-                                          className="w-4 h-4"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M5 13l4 4L19 7"
-                                          />
-                                        </svg>
-                                      </button>
-                                      <button
-                                        onClick={cancelEditing}
-                                        className="text-gray-600 hover:text-gray-800 p-1"
-                                      >
-                                        <svg
-                                          className="w-4 h-4"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M6 18L18 6M6 6l12 12"
-                                          />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                  </div>
-                                ) : (
+                      
                                   <div>
                                     <h1 className="text-gray-800 mb-3">
                                       {todo.todo}
@@ -359,10 +231,23 @@ const Index = () => {
                                     </p>
                                     <div className="w-full border-1 opacity-85 border-gray-300 my-3"></div>
                                     <div className="flex space-x-2 justify-end">
+                                       <button
+                                        onClick={() => {
+                                          setSelectedToDo(todo)
+                                          setShowEditModal(true)
+                                          setViewOnly(true)
+                                        }
+                                        }
+                                        className="text-green-600 hover:text-green-800 p-1"
+                                      >
+                                        <FaEye size={20} />
+                                      </button>
+
                                       <button
                                         onClick={() => {
                                           setSelectedToDo(todo)
                                           setShowEditModal(true)
+                                          setViewOnly(false)
                                         }
                                         }
                                         className="text-blue-700 hover:text-blue-800 p-1"
@@ -379,7 +264,6 @@ const Index = () => {
                                       </button>
                                     </div>
                                   </div>
-                                )}
                               </div>
                             )}
                           </Draggable>
@@ -399,6 +283,7 @@ const Index = () => {
                 </Droppable>
               </div>
             ))}
+            </div>
             {showAddModal ? (
               <CreateTodoModal
                 isOpen={showAddModal}
@@ -412,13 +297,18 @@ const Index = () => {
                 onClose={() => setShowEditModal(false)}
                 onEditTodo={handleEditTodo}
                 todo={selectedToDo}
+                viewOnly={viewOnly}
               />
             )}
-          </div>
         </DragDropContext>
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={Math.ceil(254 / 30)} 
+            onPageChange={setCurrentPage}/>
+         <ScrollToTopBottom/>
       </div>
     </div>
   );
 };
 
-export default Index;
+export default ToDoBoard;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function EditTodoModal({ isOpen, onClose, onEditTodo, todo }) {
+export default function EditTodoModal({ isOpen, onClose, onEditTodo, todo,viewOnly = false }) {
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("pending");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,7 +58,7 @@ export default function EditTodoModal({ isOpen, onClose, onEditTodo, todo }) {
           isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
-        <h2 className="text-xl font-semibold mb-4">Edit Todo</h2>
+        <h2 className="text-xl font-semibold mb-4">{viewOnly ? "View Task" : "Edit Task"}</h2>
 
         {toast && (
           <div
@@ -83,6 +83,7 @@ export default function EditTodoModal({ isOpen, onClose, onEditTodo, todo }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2"
+              readOnly={viewOnly}
               required
             />
           </div>
@@ -95,6 +96,7 @@ export default function EditTodoModal({ isOpen, onClose, onEditTodo, todo }) {
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2"
+              disabled={viewOnly}
             >
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>
@@ -108,15 +110,15 @@ export default function EditTodoModal({ isOpen, onClose, onEditTodo, todo }) {
               onClick={handleClose}
               className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
             >
-              Cancel
+             {viewOnly?'Close':'Cancel'} 
             </button>
-            <button
+          {!viewOnly && (  <button
               type="submit"
               disabled={isSubmitting}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
             >
               {isSubmitting ? "Saving..." : "Save Changes"}
-            </button>
+            </button>)}
           </div>
         </form>
       </div>
