@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { todoService } from '../services/todoService';
+import { FaPlus } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 const Index = () => {
   const [todos, setTodos] = useState([]);
@@ -135,7 +138,7 @@ const Index = () => {
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Project Board</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">To Do Board</h1>
           <p className="text-lg text-gray-600">Manage your tasks with drag & drop</p>
         </div>
 
@@ -146,9 +149,7 @@ const Index = () => {
               onClick={() => setShowNewTodoForm(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center space-x-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+              <FaPlus/>
               <span>Add New Task</span>
             </button>
           ) : (
@@ -262,23 +263,21 @@ const Index = () => {
                                   </div>
                                 ) : (
                                   <div>
-                                    <p className="text-gray-800 mb-3">{todo.todo}</p>
+                                    <h1 className="text-gray-800 mb-3">{todo.todo}</h1>
+                                    <p className='text-gray-500 text-sm'>Task description of Task {todo.id}</p>
+                                    <div className='w-full border-1 opacity-85 border-gray-300 my-3'></div>
                                     <div className="flex space-x-2 justify-end">
                                       <button
                                         onClick={() => startEditing(todo)}
-                                        className="text-blue-600 hover:text-blue-800 p-1"
+                                        className="text-blue-700 hover:text-blue-800 p-1"
                                       >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                       <FaPen size={20}/>
                                       </button>
                                       <button
                                         onClick={() => handleDeleteTodo(todo.id)}
                                         className="text-red-600 hover:text-red-800 p-1"
                                       >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                       <MdDeleteForever size={20}/>
                                       </button>
                                     </div>
                                   </div>
