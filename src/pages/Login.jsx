@@ -22,8 +22,8 @@ export default function Login() {
     }
 
     setError("");
-    navigate("/board")
     console.log("Logging in:", { email, password });
+    navigate("/board")
   };
 
   return (

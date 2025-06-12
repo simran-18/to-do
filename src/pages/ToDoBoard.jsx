@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback,useMemo } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { TodoService } from "../services/todoservice";
 import { FaPlus } from "react-icons/fa";
@@ -11,6 +11,7 @@ import EditTodoModal from "../components/EditToDoModal";
 import Pagination from "../components/Pagination";
 import ScrollToTopBottom from "../components/ScrollToTopBottom";
 import Loader from "../components/Loader";
+import useDebounce from "../hooks/useDebounce";
 
 const ToDoBoard = () => {
   const [todos, setTodos] = useState([]);
@@ -20,6 +21,11 @@ const ToDoBoard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewOnly, setViewOnly] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState("all");
+  const [total,setTotal]=useState(0);
+  const debouncedValue=useDebounce(searchQuery,200); 
+
   const columns = {
     pending: { title: "Pending", color: "bg-orange-100 border-orange-300" },
     "in-progress": {
@@ -29,10 +35,25 @@ const ToDoBoard = () => {
     completed: { title: "Completed", color: "bg-green-100 border-green-300" },
   };
 
+  // filter the items based on the search query or the selectedUserId
+ const filteredTodos = useMemo(() => {
+  if (!Array.isArray(todos)) return [];
+  return todos.filter((todo) => {
+    const matchesSearch = todo.todo
+      .toLowerCase()
+      .includes(debouncedValue?.toLowerCase());
+    const matchesUser =
+      selectedUserId === "all" || todo.userId.toString() === selectedUserId;
+    return matchesSearch && matchesUser;
+  });
+}, [todos, debouncedValue, selectedUserId]);
+
+console.log("filteredTodos:::",filteredTodos)
   useEffect(() => {
     fetchTodos();
   }, [currentPage]);
 
+  // api call for get the todo tasks
   const fetchTodos = async () => {
     try {
       setLoading(true);
@@ -42,6 +63,7 @@ const ToDoBoard = () => {
         status: todo.completed ? "completed" : "pending",
       }));
       setTodos(todosWithStatus);
+      setTotal(data.total)
     } catch (error) {
       console.error("Failed to fetch todos:", error);
     } finally {
@@ -49,6 +71,7 @@ const ToDoBoard = () => {
     }
   };
 
+  // api call to add new task
   const handleAddTodo = useCallback(async (newTodo) => {
     try {
       setLoading(true);
@@ -105,6 +128,7 @@ const ToDoBoard = () => {
     }
   };
 
+  // api call to edit the existing task
   const handleEditTodo = async (updatedData) => {
     if (!updatedData.todo.trim()) return;
 
@@ -135,6 +159,7 @@ const ToDoBoard = () => {
     }
   };
 
+  // api call to delete the existing task 
   const handleDeleteTodo = async (id) => {
     try {
       setLoading(true);
@@ -173,6 +198,40 @@ const ToDoBoard = () => {
           </button>
         </div>
 
+         {/* Search and Filter */}
+       <div className="flex flex-col md:flex-row gap-4 justify-center mb-8">
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-64"
+        />
+        <select
+          value={selectedUserId}
+          onChange={(e) => setSelectedUserId(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-48"
+        >
+          <option value="all">All Users</option>
+          {[...new Set(filteredTodos?.map((todo) => todo.userId))].map((id) => (
+            <option key={id} value={id}>
+              User {id}
+            </option>
+          ))}
+        </select>
+        
+        <button
+          onClick={() => {
+            setSearchQuery("");
+            setSelectedUserId("all");
+            setCurrentPage(0);
+          }}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+        >
+          Clear Filters
+        </button>
+
+      </div>
         {/* Kanban Board */}
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -186,7 +245,7 @@ const ToDoBoard = () => {
                   <h2 className="text-lg font-semibold text-gray-800 flex items-center justify-between">
                     {column.title}
                     <span className="bg-white text-gray-700 text-sm px-2 py-1 rounded-full">
-                      {todos.filter((todo) => todo.status === status).length}
+                      {filteredTodos?.filter((todo) => todo.status === status).length}
                     </span>
                   </h2>
                 </div>
@@ -199,8 +258,8 @@ const ToDoBoard = () => {
                       {...provided.droppableProps}
                       className={`p-4 min-h-96 transition-colors duration-200`}
                     >
-                      {todos
-                        .filter((todo) => todo.status === status)
+                      {filteredTodos
+                        ?.filter((todo) => todo.status === status)
                         .map((todo, index) => (
                           <Draggable
                             key={todo.id}
@@ -273,8 +332,8 @@ const ToDoBoard = () => {
                         ))}
                       {provided.placeholder}
 
-                      {/* Empty State */}
-                      {todos.filter((todo) => todo.status === status).length ===
+                      {/* Empty State if the filteredTodos array is empty */}
+                      {filteredTodos?.filter((todo) => todo.status === status).length ===
                         0 && (
                         <div className="text-center py-12 text-gray-500">
                           <div className="text-4xl mb-2">📝</div>
@@ -287,6 +346,7 @@ const ToDoBoard = () => {
               </div>
             ))}
           </div>
+          {/* Modal to create a new task */}
           {showAddModal ? (
             <CreateTodoModal
               isOpen={showAddModal}
@@ -294,6 +354,8 @@ const ToDoBoard = () => {
               onAddTodo={handleAddTodo}
             />
           ) : null}
+
+          {/* Modal to view/edit a new task (dynamically handled the view and editing of the modal baased on the action icon selected*/}
           {showEditModal && (
             <EditTodoModal
               isOpen={showEditModal}
@@ -304,11 +366,15 @@ const ToDoBoard = () => {
             />
           )}
         </DragDropContext>
-        <Pagination
+
+        {/* Pagination Bar with the current limit set to 30 per page */}
+        {filteredTodos.length>0 ?<Pagination
           currentPage={currentPage}
-          totalPages={Math.ceil(254 / 30)}
+          totalPages={Math.ceil(total / 30)}
           onPageChange={setCurrentPage}
-        />
+        />:null}
+
+        {/* Scrolling icon for better user navigation experience  */}
         <ScrollToTopBottom />
       </div>
     </div>
