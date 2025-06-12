@@ -48,7 +48,7 @@ const ToDoBoard = () => {
   });
 }, [todos, debouncedValue, selectedUserId]);
 
-console.log("filteredTodos:::",filteredTodos)
+
   useEffect(() => {
     fetchTodos();
   }, [currentPage]);
@@ -224,7 +224,7 @@ console.log("filteredTodos:::",filteredTodos)
           onClick={() => {
             setSearchQuery("");
             setSelectedUserId("all");
-            setCurrentPage(0);
+            setCurrentPage(1);
           }}
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
         >

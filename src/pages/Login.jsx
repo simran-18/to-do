@@ -11,8 +11,11 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading,setLoading]=useState(false);
+
   const handleLogin = (e) => {
     e.preventDefault();
+    setLoading(true);
     // Email regex: basic format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,7 +26,10 @@ export default function Login() {
 
     setError("");
     console.log("Logging in:", { email, password });
-    navigate("/board")
+   setTimeout(() => {
+    navigate("/board");
+    setLoading(false);
+  }, 1000);
   };
 
   return (
@@ -40,6 +46,7 @@ export default function Login() {
         <input
           type="email"
           placeholder="Email"
+          aria-label="Email"
           className="w-full p-3 mb-4 border rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -48,6 +55,7 @@ export default function Login() {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
+            aria-label="Password"
             className="w-full p-3 border rounded pr-10"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -64,7 +72,7 @@ export default function Login() {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          Log In
+          {loading ? "Logging in..." : "Log In"}
         </button>
       </form>
     </div>
