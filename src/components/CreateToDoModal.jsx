@@ -43,7 +43,7 @@ export default function CreateTodoModal({ isOpen, onClose,onAddTodo }) {
   return (
      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 bg-opacity-50 transition-opacity">
       <div
-        className={`bg-white rounded-lg shadow-lg p-6 w-full max-w-md transform transition-all duration-200 ease-out ${
+        className={`bg-white rounded-lg shadow-lg p-6 w-full m-2 max-w-md transform transition-all duration-200 ease-out ${
           isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
@@ -85,7 +85,7 @@ export default function CreateTodoModal({ isOpen, onClose,onAddTodo }) {
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2"
-              
+
             >
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>

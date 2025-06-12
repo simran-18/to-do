@@ -54,7 +54,7 @@ export default function EditTodoModal({ isOpen, onClose, onEditTodo, todo,viewOn
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 bg-opacity-50 transition-opacity">
       <div
-        className={`bg-white rounded-lg shadow-lg p-6 w-full max-w-md transform transition-all duration-200 ease-out ${
+        className={`bg-white rounded-lg shadow-lg p-6 w-full max-w-md m-2 transform transition-all duration-200 ease-out ${
           isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
