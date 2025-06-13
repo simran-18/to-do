@@ -1,9 +1,9 @@
 {
-  "name": "todoproject",
-  "private": true,
+  "name": "to-do",
+  "homepage": "https://simran-18.github.io/to-do",
+  "private": false,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://simran-18.github.io/to-do/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

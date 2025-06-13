@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy,Suspense } from "react";
 import Loader from "./components/Loader";
 import { ToastContainer } from 'react-toastify';
@@ -10,7 +10,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const App = () => (
   <div>
 <ToastContainer position="top-right" autoClose={3000} />
-      <BrowserRouter>
+      <BrowserRouter basename="/to-do">
        <Suspense fallback={<Loader/>}>
         <Routes>
           <Route path="/" element={<Login />} />
