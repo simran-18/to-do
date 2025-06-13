@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { lazy,Suspense } from "react";
 import Loader from "./components/Loader";
 import { ToastContainer } from 'react-toastify';
