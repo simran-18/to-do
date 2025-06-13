@@ -12,6 +12,7 @@ import Pagination from "../components/Pagination";
 import ScrollToTopBottom from "../components/ScrollToTopBottom";
 import Loader from "../components/Loader";
 import useDebounce from "../hooks/useDebounce";
+import { showErrorToast,showInfoToast,showSuccessToast } from "../utils/toast";
 
 const ToDoBoard = () => {
   const [todos, setTodos] = useState([]);
@@ -66,6 +67,7 @@ const ToDoBoard = () => {
       setTotal(data.total)
     } catch (error) {
       console.error("Failed to fetch todos:", error);
+      showErrorToast("Failed to fetch todos.");
     } finally {
       setLoading(false);
     }
@@ -82,8 +84,10 @@ const ToDoBoard = () => {
       });
 
       setTodos((prev) => [...prev, { ...createdTodo, status: newTodo.status }]);
+      showSuccessToast("Todo created successfully!");
     } catch (error) {
       console.error("Failed to create todo:", error);
+      showErrorToast("Failed to create todo.");
     } finally {
       setLoading(false);
     }
@@ -112,6 +116,7 @@ const ToDoBoard = () => {
         completed: newStatus === "completed",
         status: newStatus,
       });
+     showInfoToast(`Task moved to ${newStatus.replace("-", " ")}`);
     } catch (error) {
       setTodos((prev) =>
         prev.map((todo) =>
@@ -124,6 +129,7 @@ const ToDoBoard = () => {
             : todo
         )
       );
+       showErrorToast("Failed to update status.");
       console.error("Failed to update todo status:", error);
     }
   };
@@ -152,6 +158,8 @@ const ToDoBoard = () => {
         )
       );
       setSelectedToDo("");
+      showSuccessToast("Todo updated successfully!");
+      showErrorToast("Failed to update todo.");
     } catch (error) {
       console.error("Failed to update todo:", error);
     } finally {
@@ -165,8 +173,10 @@ const ToDoBoard = () => {
       setLoading(true);
       await TodoService.deleteTodo(id);
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
+      showSuccessToast("Todo deleted successfully!");
     } catch (error) {
       console.error("Failed to delete todo:", error);
+      showErrorToast("Failed to delete todo.");
     } finally {
       setLoading(false);
     }

@@ -1,13 +1,15 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy,Suspense } from "react";
 import Loader from "./components/Loader";
+import { ToastContainer } from 'react-toastify';
 
 const Login = lazy(() => import("./pages/Login"));
 const ToDoBoard = lazy(() => import("./pages/ToDoBoard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const App = () => (
+  <div>
+<ToastContainer position="top-right" autoClose={3000} />
       <BrowserRouter>
        <Suspense fallback={<Loader/>}>
         <Routes>
@@ -17,6 +19,7 @@ const App = () => (
         </Routes>
         </Suspense>
       </BrowserRouter>
+  </div>
 );
 
 export default App;
