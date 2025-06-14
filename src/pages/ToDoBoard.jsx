@@ -41,7 +41,7 @@ const ToDoBoard = () => {
   if (!Array.isArray(todos)) return [];
   return todos.filter((todo) => {
     const matchesSearch = todo.todo
-      .toLowerCase()
+      ?.toLowerCase()
       .includes(debouncedValue?.toLowerCase());
     const matchesUser =
       selectedUserId === "all" || todo.userId.toString() === selectedUserId;
@@ -80,7 +80,7 @@ const ToDoBoard = () => {
       const createdTodo = await TodoService.createTodo({
         todo: newTodo.todo,
         completed: newTodo.status === "completed",
-        userId: 1,
+        userId: 76,
       });
 
       setTodos((prev) => [...prev, { ...createdTodo, status: newTodo.status }]);
@@ -347,7 +347,7 @@ const ToDoBoard = () => {
                         0 && (
                         <div className="text-center py-12 text-gray-500">
                           <div className="text-4xl mb-2">📝</div>
-                          <p>No tasks in {column.title.toLowerCase()}</p>
+                          <p>No tasks in {column.title?.toLowerCase()}</p>
                         </div>
                       )}
                     </div>

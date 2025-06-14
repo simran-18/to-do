@@ -38,7 +38,7 @@ export default function Login() {
       alt="Random Image"
       className="w-24 h-24 lg:w-60 lg:h-32 rounded mb-3"
       placeholder={<div className="w-6 h-6 rounded-full border-2 border-dashed border-gray-400 animate-spin"></div>}/>
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-11/12 lg:max-w-md">
+      <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-11/12 md:w-1/2 lg:max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
         {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
