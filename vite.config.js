@@ -6,6 +6,5 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     react()
-  ],
-  base:"/to-do"
+  ]
 })

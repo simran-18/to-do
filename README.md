@@ -4,7 +4,7 @@ README - Trello-Style Todo Board
 To run the project locally, follow these steps:
 
 1. Clone the Repository:
-   git clone https://github.com/your-username/to-do.git
+   git clone https://github.com/simran-18/to-do.git
    cd to-do
 
 2. Install Dependencies:
