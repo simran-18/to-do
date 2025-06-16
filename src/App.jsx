@@ -10,7 +10,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const App = () => (
   <div>
 <ToastContainer position="top-right" autoClose={3000} />
-      <BrowserRouter basename="/to-do">
+      <BrowserRouter>
        <Suspense fallback={<Loader/>}>
         <Routes>
           <Route path="/" element={<Login />} />
