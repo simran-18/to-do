@@ -13,8 +13,8 @@ const App = () => (
       <BrowserRouter>
        <Suspense fallback={<Loader/>}>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/board" element={<ToDoBoard />} />
+          {/* <Route path="/" element={<Login />} /> */}
+          <Route path="/" element={<ToDoBoard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>
